@@ -131,7 +131,7 @@
   .modal-overlay.open .modal { transform: translateY(0); }
   .modal-top { background: linear-gradient(135deg, var(--purple-deep) 0%, var(--purple-mid) 100%); padding: 2rem 2rem 1.5rem; position: relative; overflow: hidden; }
   .modal-top::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,107,26,0.1) 1px, transparent 1px); background-size: 20px 20px; }
-  .modal-close { position: absolute; top: 1.25rem; right: 1.25rem; width: 34px; height: 34px; background: rgba(255,255,255,0.1); border: 1.5px solid rgba(255,255,255,0.2); border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; transition: background 0.15s; z-index: 1; }
+  .modal-close { position: absolute; top: 1.25rem; right: 1.25rem; width: 44px; height: 44px; background: rgba(255,255,255,0.1); border: 1.5px solid rgba(255,255,255,0.2); border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; transition: background 0.15s; z-index: 50; }
   .modal-close:hover { background: rgba(255,255,255,0.2); }
   .modal-emoji { font-size: 3.5rem; margin-bottom: 0.75rem; position: relative; z-index: 1; }
   .modal-title { font-family: 'Permanent Marker', cursive; font-size: 2.4rem; color: var(--white); line-height: 1; margin-bottom: 0.4rem; position: relative; z-index: 1; }
@@ -372,6 +372,96 @@ const recipes = [
       'Mit Beeren oder Ahornsirup servieren.',
     ],
     tip:'Kein Zucker nötig – die Banane süßt genug. Je reifer, desto süßer der Teig.',
+  },
+  {
+    id:4, emoji:'🍓', title:'Porridge mit Beeren & Quark', subtitle:'Frühstück das bis Mittag hält', time:'10 Min',
+    tags:['schnell','protein','vegi','anfaenger'],
+    macros:{protein:'21g',carbs:'67g',fat:'5g',fiber:'10g'},
+    keyIngredients:['haferflocken','tiefkühlbeeren','banane','quark'],
+    ingredientsList:[
+      {text:'60g Haferflocken (zart)',key:'haferflocken'},
+      {text:'100g Tiefkühlbeeren (gemischt)',key:'tiefkühlbeeren'},
+      {text:'½ Banane, in Scheiben',key:'banane'},
+      {text:'150ml Wasser',key:'wasser'},
+      {text:'150g Magerquark',key:'quark'},
+      {text:'1 Prise Salz',key:'salz'},
+    ],
+    steps:[
+      'Haferflocken, Beeren, Banane und Wasser in einen kleinen Topf geben.',
+      'Bei mittlerer Hitze unter Rühren aufkochen, bis die Beeren aufgetaut sind und der Brei eindickt – ca. 3–4 Min.',
+      'Topf vom Herd nehmen. Magerquark direkt obendrauf kippen – nicht unterrühren.',
+      'So servieren: warm unten, kühl und cremig oben. Fertig.',
+    ],
+    tip:'Wasser statt Milch brennt nicht an – und durch den Quark obendrauf ist genug Cremigkeit drin. Je reifer die Banane, desto süßer wird es ganz ohne Zucker.',
+  },
+  {
+    id:5, emoji:'🍋', title:'Gelbe Linsen mit Honigkarotten', subtitle:'Linsenbrei, Parmesan & karamellisierte Karotten', time:'25 Min',
+    tags:['protein','vegi','vorrat'],
+    macros:{protein:'34g',carbs:'58g',fat:'16g',fiber:'14g'},
+    keyIngredients:['linsen','karotten','parmesan','honig'],
+    ingredientsList:[
+      {text:'80g gelbe Linsen (trocken)',key:'linsen'},
+      {text:'2–3 Karotten',key:'karotten'},
+      {text:'30g Parmesan, fein gerieben',key:'parmesan'},
+      {text:'1 TL Honig',key:'honig'},
+      {text:'1 EL Olivenöl',key:'öl'},
+      {text:'Salz, Pfeffer, optional Kreuzkümmel',key:'gewürze'},
+    ],
+    steps:[
+      'Linsen in einem Topf mit doppelter Menge Wasser und einer Prise Salz aufkochen. Ca. 15 Min köcheln lassen bis sie weich sind und sich aufgelöst haben.',
+      'Karotten schälen und in kleine Scheiben oder Stifte schneiden.',
+      'Öl in einer Pfanne erhitzen, Karotten bei mittlerer Hitze 5 Min anbraten. Honig drüber, kurz karamellisieren lassen.',
+      'Linsenbrei mit Parmesan verrühren – großzügig. Mit Salz und Pfeffer abschmecken.',
+      'Linsenbrei auf den Teller, Karotten drauf. Fertig.',
+    ],
+    tip:'Parmesan schmeckt so gut zu Linsen weil beide dasselbe Umami haben wie Fleisch – das ist kein Zufall. Kreuzkümmel macht den Linsenbrei noch aromatischer, falls du ihn da hast.',
+  },
+  {
+    id:6, emoji:'🥚', title:'Kartoffeln, Gurkensalat & Rührei', subtitle:'Der Klassiker mit Vorberei-Trick', time:'30 Min',
+    tags:['protein','vegi','pre','anfaenger'],
+    macros:{protein:'24g',carbs:'61g',fat:'15g',fiber:'5g'},
+    keyIngredients:['kartoffeln','eier','gurke','joghurt'],
+    ingredientsList:[
+      {text:'300g Kartoffeln',key:'kartoffeln'},
+      {text:'2–3 Eier',key:'eier'},
+      {text:'1 Gurke',key:'gurke'},
+      {text:'100g Joghurt oder saure Sahne',key:'joghurt'},
+      {text:'1 EL Öl oder Butter',key:'öl'},
+      {text:'Salz, Pfeffer, optional Dill',key:'gewürze'},
+    ],
+    steps:[
+      'Kartoffeln schälen, in Würfel schneiden, mit Salz in kaltem Wasser aufsetzen. Trick: Das geht auch 30 Min vor dem Sport – danach nur noch fertigmachen.',
+      'Kartoffeln ca. 15 Min kochen bis sie weich sind. Abgießen.',
+      'Gurke grob reiben, mit 1 TL Salz mischen, 10 Min stehen lassen – so zieht sie durch. Dann Joghurt oder saure Sahne drüber, Pfeffer, fertig.',
+      'Eier verquirlen, mit Salz würzen. In Pfanne mit etwas Öl bei mittlerer Hitze stocken lassen, dabei langsam rühren.',
+      'Alles zusammen auf den Teller. Der Gurkensalat ist extra flüssig – das gehört so.',
+    ],
+    tip:'Der Vorbereitungs-Trick funktioniert auch am Morgen vor der Schule: Kartoffeln ins Wasser legen, abends sind sie in 15 Minuten fertig. Dill macht den Gurkensalat nochmal besser – frisch, getrocknet oder aus dem Tiefkühler.',
+  },
+  {
+    id:7, emoji:'🍕', title:'Haferflocken-Pizza', subtitle:'Knuspriger Boden ohne richtiges Mehl', time:'35 Min',
+    tags:['protein','vegi'],
+    macros:{protein:'19g',carbs:'40g',fat:'12g',fiber:'6g'},
+    keyIngredients:['haferflocken','mozzarella','tomaten','eier'],
+    ingredientsList:[
+      {text:'100g Haferflocken (zart)',key:'haferflocken'},
+      {text:'2 EL Mehl',key:'mehl'},
+      {text:'½ TL Backpulver',key:'backpulver'},
+      {text:'1 Ei',key:'eier'},
+      {text:'4 EL Wasser',key:'wasser'},
+      {text:'1 EL Olivenöl',key:'öl'},
+      {text:'125g Mozzarella',key:'mozzarella'},
+      {text:'3–4 EL Tomatenmark oder passierte Tomaten',key:'tomaten'},
+      {text:'Belag nach Wahl: Paprika, Champignons, Spinat…',key:'gemüse'},
+    ],
+    steps:[
+      'Ofen auf 220°C vorheizen. Haferflocken in einem Mixer oder mit einem Stabmixer fein mahlen.',
+      'Gemahlene Haferflocken mit Mehl, Backpulver, Ei, Wasser, Öl und einer Prise Salz zu einem Teig verrühren. Kurz quellen lassen.',
+      'Teig auf einem mit Backpapier belegten Blech dünn ausstreichen – so dünn wie möglich.',
+      '10 Min vorbacken bis der Boden leicht fest wird.',
+      'Tomatenmark drauf, Mozzarella drüber, Belag drauf. Weitere 12–15 Min backen bis der Käse Farbe bekommt.',
+    ],
+    tip:'Mozzarella statt Emmentaler: weniger Fett, mehr Protein, schmilzt besser. Wer mehr Protein will: Thunfisch oder gebratenes Hühnchen als Belag. Die Makros oben gelten für eine halbe Pizza als Portion.',
   },
 ];
 
