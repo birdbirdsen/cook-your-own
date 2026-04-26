@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cook Your Own</title>
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0f0f0f;
+    --purple-deep: #1a0a2e;
+    --purple-mid: #2d1254;
+    --purple-accent: #3d1a6e;
+    --orange: #ff6b1a;
+    --orange-light: #ff8c42;
+    --white: #f5f2ee;
+    --cream: #ede9e3;
+    --green: #3a7d44;
+    --yellow: #e8a800;
+    --blue: #2563a8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--white); color: var(--black); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
+
+  header {
+    background: var(--purple-deep);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 68px; position: sticky; top: 0; z-index: 100;
+    border-bottom: 2px solid var(--purple-accent);
+  }
+  .logo { font-family: 'Permanent Marker', cursive; font-size: 1.6rem; color: var(--white); }
+  .logo span { color: var(--orange); }
+  nav { display: flex; gap: 1.5rem; align-items: center; }
+  nav a { color: rgba(245,242,238,0.55); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; transition: color 0.2s; cursor: pointer; }
+  nav a:hover, nav a.nav-active { color: var(--orange); }
+
+  .hero { background: var(--purple-deep); padding: 4rem 2rem 5.5rem; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(255,107,26,0.12) 0%, transparent 70%); top: -100px; right: -100px; pointer-events: none; }
+  .hero-inner { max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+  .hero-tag { display: inline-block; color: var(--orange); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; padding: 0.3rem 0; margin-bottom: 1.2rem; border-bottom: 2px solid var(--orange); }
+  .hero h1 { font-family: 'Permanent Marker', cursive; font-size: clamp(3.2rem, 9vw, 7rem); color: var(--white); line-height: 1; margin-bottom: 0.3rem; }
+  .hero h1 .outline { -webkit-text-stroke: 2px var(--orange); color: transparent; }
+  .hero h1 .solid { color: var(--orange); }
+  .hero-sub { font-family: 'Permanent Marker', cursive; font-size: clamp(1.2rem, 3vw, 2rem); color: rgba(245,242,238,0.35); margin-bottom: 1.75rem; }
+  .hero p { color: rgba(245,242,238,0.62); font-size: 1.05rem; max-width: 500px; line-height: 1.65; font-weight: 300; }
+  .hero p strong { color: var(--orange-light); font-weight: 500; }
+
+  .tabs-bar { background: var(--purple-mid); border-bottom: 2px solid var(--purple-accent); position: sticky; top: 68px; z-index: 90; }
+  .tabs-inner { max-width: 900px; margin: 0 auto; display: flex; }
+  .tab-btn { padding: 0.9rem 1.5rem; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(245,242,238,0.45); background: none; border: none; border-bottom: 3px solid transparent; cursor: pointer; transition: all 0.2s; margin-bottom: -2px; }
+  .tab-btn:hover { color: rgba(245,242,238,0.8); }
+  .tab-btn.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+  .main { max-width: 900px; margin: 0 auto; padding: 2.5rem 2rem; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .filter-row { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; margin-bottom: 1.5rem; }
+  .filter-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(15,15,15,0.35); margin-right: 0.3rem; }
+  .filter-btn { background: white; border: 1.5px solid rgba(15,15,15,0.12); border-radius: 100px; padding: 0.38rem 0.9rem; font-size: 0.78rem; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; transition: all 0.15s; color: var(--black); }
+  .filter-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .filter-btn.active { background: var(--orange); color: white; border-color: var(--orange); }
+
+  .section-header { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 2rem; }
+  .section-title { font-family: 'Permanent Marker', cursive; font-size: 1.8rem; color: var(--purple-deep); }
+  .section-count { font-size: 0.8rem; color: rgba(15,15,15,0.38); font-weight: 500; }
+
+  .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(265px, 1fr)); gap: 1.5rem; }
+  .recipe-card { background: white; border: 1.5px solid rgba(15,15,15,0.07); border-radius: 14px; overflow: hidden; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+  .recipe-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(26,10,46,0.15); }
+  .card-image { height: 185px; background: linear-gradient(135deg, var(--purple-deep) 0%, var(--purple-mid) 100%); display: flex; align-items: center; justify-content: center; font-size: 4.5rem; position: relative; overflow: hidden; }
+  .card-image::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,107,26,0.15) 1px, transparent 1px); background-size: 18px 18px; }
+  .card-image-emoji { position: relative; z-index: 1; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4)); }
+  .match-badge { position: absolute; top: 10px; right: 10px; background: rgba(26,10,46,0.85); border: 1.5px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 0.25rem 0.65rem; font-size: 0.7rem; font-weight: 700; color: white; z-index: 2; backdrop-filter: blur(4px); }
+  .match-badge.full { border-color: #4ade80; color: #4ade80; }
+  .match-badge.close { border-color: var(--orange); color: var(--orange-light); }
+  .card-body { padding: 1.2rem; }
+  .card-icons { display: flex; gap: 0.35rem; margin-bottom: 0.7rem; flex-wrap: wrap; }
+  .icon-badge { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; position: relative; cursor: help; }
+  .icon-badge .tooltip { position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); background: var(--purple-deep); color: var(--white); font-size: 0.65rem; white-space: nowrap; padding: 0.3rem 0.6rem; border-radius: 4px; opacity: 0; pointer-events: none; transition: opacity 0.15s; font-weight: 500; }
+  .icon-badge:hover .tooltip { opacity: 1; }
+  .icon-schnell { background: #fff3cd; } .icon-protein { background: #fde8e0; } .icon-vegi { background: #d4edda; }
+  .icon-mitnehmen { background: #dbeafe; } .icon-pre { background: #fef3c7; } .icon-post { background: #ede9fe; }
+  .icon-vorrat { background: #e0f2fe; } .icon-anfaenger { background: #fce7f3; }
+  .timing-tag { display: inline-flex; align-items: center; gap: 0.3rem; font-size: 0.73rem; color: rgba(15,15,15,0.4); font-weight: 500; margin-bottom: 0.4rem; }
+  .card-title { font-family: 'Permanent Marker', cursive; font-size: 1.35rem; margin-bottom: 0.3rem; line-height: 1.15; color: var(--purple-deep); }
+  .card-subtitle { font-size: 0.8rem; color: rgba(15,15,15,0.45); margin-bottom: 0.75rem; font-weight: 300; }
+  .missing-list { margin-bottom: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.3rem; }
+  .missing-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(15,15,15,0.3); width: 100%; margin-bottom: 0.2rem; }
+  .missing-tag { background: #fff0e8; border: 1px solid #ffd0b0; border-radius: 4px; padding: 0.15rem 0.5rem; color: #c45000; font-size: 0.73rem; font-weight: 500; }
+  .macros { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.4rem; border-top: 1.5px solid rgba(15,15,15,0.06); padding-top: 0.9rem; }
+  .macro { text-align: center; }
+  .macro-value { font-family: 'Permanent Marker', cursive; font-size: 1rem; line-height: 1; }
+  .macro-label { font-size: 0.55rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(15,15,15,0.38); margin-top: 0.2rem; }
+  .macro.protein .macro-value { color: var(--orange); } .macro.carbs .macro-value { color: var(--yellow); }
+  .macro.fat .macro-value { color: var(--green); } .macro.fiber .macro-value { color: var(--blue); }
+
+  /* FRIDGE PANEL */
+  .fridge-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; }
+  .fridge-box { background: white; border: 1.5px solid rgba(15,15,15,0.08); border-radius: 14px; padding: 1.5rem; }
+  .fridge-box h3 { font-family: 'Permanent Marker', cursive; font-size: 1.3rem; color: var(--purple-deep); margin-bottom: 1.1rem; }
+  .fridge-input-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+  .fridge-input { flex: 1; background: var(--cream); border: 1.5px solid rgba(15,15,15,0.1); border-radius: 8px; padding: 0.6rem 0.9rem; font-size: 0.88rem; font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.15s; }
+  .fridge-input:focus { border-color: var(--purple-accent); }
+  .fridge-input::placeholder { color: rgba(15,15,15,0.28); }
+  .add-btn { background: var(--orange); border: none; border-radius: 8px; padding: 0.6rem 1rem; color: white; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: background 0.15s; white-space: nowrap; }
+  .add-btn:hover { background: var(--orange-light); }
+  .suggestions { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.1rem; }
+  .suggestions-label { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(15,15,15,0.3); width: 100%; margin-bottom: 0.2rem; }
+  .suggestion-chip { background: var(--cream); border: 1px dashed rgba(15,15,15,0.2); border-radius: 100px; padding: 0.25rem 0.7rem; font-size: 0.75rem; cursor: pointer; transition: all 0.15s; color: rgba(15,15,15,0.6); }
+  .suggestion-chip:hover { border-color: var(--orange); color: var(--orange); background: #fff0e8; }
+  .suggestion-chip.used { opacity: 0.35; cursor: default; text-decoration: line-through; pointer-events: none; }
+  .fridge-tags-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(15,15,15,0.3); margin-bottom: 0.6rem; }
+  .fridge-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; min-height: 36px; }
+  .fridge-tag { display: flex; align-items: center; gap: 0.4rem; background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid)); color: white; border-radius: 100px; padding: 0.3rem 0.4rem 0.3rem 0.75rem; font-size: 0.78rem; font-weight: 500; }
+  .fridge-tag button { background: rgba(255,255,255,0.15); border: none; border-radius: 50%; width: 18px; height: 18px; color: white; cursor: pointer; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; transition: background 0.15s; }
+  .fridge-tag button:hover { background: rgba(255,255,255,0.3); }
+  .fridge-empty { font-size: 0.82rem; color: rgba(15,15,15,0.3); font-style: italic; }
+  .missing-filter-row { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1.25rem; align-items: center; }
+  .missing-filter-label { font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(15,15,15,0.35); margin-right: 0.3rem; }
+  .fridge-results-full { grid-column: 1 / -1; margin-top: 0.5rem; }
+  .empty-state { text-align: center; padding: 2.5rem 1rem; color: rgba(15,15,15,0.35); }
+  .empty-state .empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+  .empty-state p { font-size: 0.9rem; line-height: 1.6; }
+
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(26,10,46,0.75); z-index: 200; display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.25s; backdrop-filter: blur(6px); }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal { background: var(--white); border-radius: 20px 20px 0 0; width: 100%; max-width: 700px; max-height: 90vh; overflow-y: auto; transform: translateY(30px); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-top { background: linear-gradient(135deg, var(--purple-deep) 0%, var(--purple-mid) 100%); padding: 2rem 2rem 1.5rem; position: relative; overflow: hidden; }
+  .modal-top::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,107,26,0.1) 1px, transparent 1px); background-size: 20px 20px; }
+  .modal-close { position: absolute; top: 1.25rem; right: 1.25rem; width: 34px; height: 34px; background: rgba(255,255,255,0.1); border: 1.5px solid rgba(255,255,255,0.2); border-radius: 50%; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; transition: background 0.15s; z-index: 1; }
+  .modal-close:hover { background: rgba(255,255,255,0.2); }
+  .modal-emoji { font-size: 3.5rem; margin-bottom: 0.75rem; position: relative; z-index: 1; }
+  .modal-title { font-family: 'Permanent Marker', cursive; font-size: 2.4rem; color: var(--white); line-height: 1; margin-bottom: 0.4rem; position: relative; z-index: 1; }
+  .modal-timing { font-size: 0.75rem; color: rgba(245,242,238,0.5); font-weight: 500; position: relative; z-index: 1; margin-bottom: 1rem; }
+  .modal-icons { display: flex; gap: 0.5rem; flex-wrap: wrap; position: relative; z-index: 1; }
+  .modal-icon-badge { display: flex; align-items: center; gap: 0.35rem; padding: 0.3rem 0.7rem; border-radius: 100px; font-size: 0.72rem; font-weight: 500; }
+  .modal-body { padding: 1.75rem 2rem 3rem; }
+  .modal-macros { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid)); border-radius: 12px; padding: 1.25rem; margin-bottom: 2rem; }
+  .modal-macro { text-align: center; }
+  .modal-macro-value { font-family: 'Permanent Marker', cursive; font-size: 1.7rem; line-height: 1; }
+  .modal-macro-label { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(245,242,238,0.45); margin-top: 0.25rem; }
+  .modal-macro.protein .modal-macro-value { color: var(--orange); } .modal-macro.carbs .modal-macro-value { color: var(--yellow); }
+  .modal-macro.fat .modal-macro-value { color: #5dba6e; } .modal-macro.fiber .modal-macro-value { color: #60a5fa; }
+  .modal-section-title { font-family: 'Permanent Marker', cursive; font-size: 1rem; color: var(--purple-accent); margin-bottom: 0.75rem; margin-top: 1.75rem; }
+  .ingredients-list { list-style: none; display: flex; flex-direction: column; }
+  .ingredients-list li { display: flex; align-items: center; gap: 0.75rem; font-size: 0.93rem; padding: 0.55rem 0; border-bottom: 1px solid rgba(15,15,15,0.06); color: rgba(15,15,15,0.8); }
+  .ingredients-list li::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: rgba(15,15,15,0.2); flex-shrink: 0; }
+  .ingredients-list li.ing-have::before { background: #4ade80; }
+  .ingredients-list li.ing-miss { color: rgba(15,15,15,0.42); }
+  .ingredients-list li.ing-miss::before { background: #fca5a5; }
+  .ing-tag { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-left: auto; }
+  .ing-tag.have { color: #16a34a; } .ing-tag.miss { color: #dc2626; }
+  .steps-list { list-style: none; display: flex; flex-direction: column; gap: 1.1rem; }
+  .step { display: flex; gap: 1rem; align-items: flex-start; }
+  .step-num { font-family: 'Permanent Marker', cursive; font-size: 1.6rem; color: var(--orange); line-height: 1; flex-shrink: 0; width: 28px; }
+  .step-text { font-size: 0.93rem; line-height: 1.65; padding-top: 0.15rem; color: rgba(15,15,15,0.78); }
+  .tip-box { background: linear-gradient(135deg, rgba(26,10,46,0.05), rgba(26,10,46,0.02)); border-left: 3px solid var(--orange); border-radius: 0 10px 10px 0; padding: 1rem 1.25rem; margin-top: 1.75rem; font-size: 0.875rem; line-height: 1.65; color: rgba(15,15,15,0.72); }
+  .tip-box strong { display: block; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange); margin-bottom: 0.4rem; font-family: 'DM Sans', sans-serif; font-weight: 700; }
+
+  @media (max-width: 650px) {
+    nav { display: none; }
+    .fridge-layout { grid-template-columns: 1fr; }
+    .macros { grid-template-columns: repeat(2, 1fr); }
+    .modal-macros { grid-template-columns: repeat(2, 1fr); }
+    .hero h1 { font-size: 3rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Cook <span>Your</span> Own</div>
+  <nav>
+    <a onclick="switchTab('rezepte')" id="nav-rezepte" class="nav-active">Rezepte</a>
+    <a onclick="switchTab('kuehlschrank')" id="nav-kuehlschrank">🧊 Kühlschrank</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-tag">Für alle, die sich selbst versorgen</div>
+    <h1><span class="outline">Cook</span><br><span class="solid">Your Own.</span></h1>
+    <div class="hero-sub">Kein Junk. Kein Stress.</div>
+    <p>Rezepte, die <strong>wirklich satt machen</strong> – und die du selbst hinbekommst. Egal ob vor dem Training, nach der Schule oder einfach weil du Hunger hast.</p>
+  </div>
+</section>
+
+<div class="tabs-bar">
+  <div class="tabs-inner">
+    <button class="tab-btn active" id="tab-rezepte" onclick="switchTab('rezepte')">📖 Alle Rezepte</button>
+    <button class="tab-btn" id="tab-kuehlschrank" onclick="switchTab('kuehlschrank')">🧊 Was hab ich da?</button>
+  </div>
+</div>
+
+<main class="main">
+
+  <!-- REZEPTE -->
+  <div class="panel active" id="panel-rezepte">
+    <div class="filter-row">
+      <span class="filter-label">Filter:</span>
+      <button class="filter-btn active" onclick="setFilter('all',this)">Alle</button>
+      <button class="filter-btn" onclick="setFilter('schnell',this)">⚡ Schnell</button>
+      <button class="filter-btn" onclick="setFilter('protein',this)">💪 Proteinreich</button>
+      <button class="filter-btn" onclick="setFilter('vegi',this)">🌱 Vegetarisch</button>
+      <button class="filter-btn" onclick="setFilter('mitnehmen',this)">🎒 Zum Mitnehmen</button>
+      <button class="filter-btn" onclick="setFilter('pre',this)">🔥 Vor dem Training</button>
+      <button class="filter-btn" onclick="setFilter('post',this)">🛁 Nach dem Training</button>
+      <button class="filter-btn" onclick="setFilter('anfaenger',this)">👋 Für Einsteiger</button>
+    </div>
+    <div class="section-header">
+      <h2 class="section-title">Rezepte</h2>
+      <span class="section-count" id="count">3 Rezepte</span>
+    </div>
+    <div class="recipe-grid" id="recipeGrid"></div>
+  </div>
+
+  <!-- KÜHLSCHRANK -->
+  <div class="panel" id="panel-kuehlschrank">
+    <div class="fridge-layout">
+
+      <div class="fridge-box">
+        <h3>🧊 Was hast du da?</h3>
+        <div class="fridge-input-row">
+          <input class="fridge-input" id="fridgeInput" type="text" placeholder="Zutat tippen…" onkeydown="if(event.key==='Enter')addFridgeItem()">
+          <button class="add-btn" onclick="addFridgeItem()">+ Hinzufügen</button>
+        </div>
+        <div class="suggestions">
+          <span class="suggestions-label">Schnell hinzufügen:</span>
+          <span class="suggestion-chip" onclick="quickAdd(this,'Hühnchen')">🍗 Hühnchen</span>
+          <span class="suggestion-chip" onclick="quickAdd(this,'Tofu')">🥢 Tofu</span>
+          <span class="suggestion-chip" onclick="quickAdd(this,'Eier')">🥚 Eier</span>
+          <span class="suggestion-chip" onclick="quickAdd(this,'Paprika')">🫑 Paprika</span>
+          <span class="suggestion-chip" onclick="quickAdd(this,'Gurke')">🥒 Gurke</span>
+          <span class="suggestion-chip" onclick="quickAdd(this,'Banane')">🍌 Banane</span>
+          <span class="suggestion-chip" onclick="quickAdd(this,'Quark')">🍦 Quark</span>
+          <span class="suggestion-chip" onclick="quickAdd(this,'Avocado')">🥑 Avocado</span>
+          <span class="suggestion-chip" onclick="quickAdd(this,'Süßkartoffel')">🍠 Süßkartoffel</span>
+          <span class="suggestion-chip" onclick="quickAdd(this,'Quinoa')">🌾 Quinoa</span>
+          <span class="suggestion-chip" onclick="quickAdd(this,'Haferflocken')">🥣 Haferflocken</span>
+          <span class="suggestion-chip" onclick="quickAdd(this,'Spinat')">🥬 Spinat</span>
+          <span class="suggestion-chip" onclick="quickAdd(this,'Frischkäse')">🧀 Frischkäse</span>
+        </div>
+        <p class="fridge-tags-label">Im Kühlschrank:</p>
+        <div class="fridge-tags" id="fridgeTags">
+          <span class="fridge-empty">Noch nichts eingetragen.</span>
+        </div>
+      </div>
+
+      <div class="fridge-box">
+        <h3>🍽️ Was kannst du kochen?</h3>
+        <div class="missing-filter-row">
+          <span class="missing-filter-label">Max. fehlende Zutaten:</span>
+          <button class="filter-btn active" onclick="setMissing(99,this)">Alle</button>
+          <button class="filter-btn" onclick="setMissing(0,this)">✅ Alles da</button>
+          <button class="filter-btn" onclick="setMissing(1,this)">+1</button>
+          <button class="filter-btn" onclick="setMissing(2,this)">+2</button>
+          <button class="filter-btn" onclick="setMissing(3,this)">+3</button>
+        </div>
+        <div id="fridgeResults"></div>
+      </div>
+
+      <div class="fridge-results-full">
+        <div class="recipe-grid" id="fridgeGrid"></div>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-top">
+      <button class="modal-close" onclick="closeModalDirect()">✕</button>
+      <div class="modal-emoji" id="mEmoji"></div>
+      <h2 class="modal-title" id="mTitle"></h2>
+      <div class="modal-timing" id="mTiming"></div>
+      <div class="modal-icons" id="mIcons"></div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-macros" id="mMacros"></div>
+      <p class="modal-section-title">Zutaten</p>
+      <ul class="ingredients-list" id="mIngredients"></ul>
+      <p class="modal-section-title">So geht's</p>
+      <ol class="steps-list" id="mSteps"></ol>
+      <div class="tip-box" id="mTip"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ICONS = {
+  schnell:   {emoji:'⚡',label:'Unter 20 Min',cls:'icon-schnell'},
+  protein:   {emoji:'💪',label:'Proteinreich',cls:'icon-protein'},
+  vegi:      {emoji:'🌱',label:'Vegetarisch',cls:'icon-vegi'},
+  mitnehmen: {emoji:'🎒',label:'Zum Mitnehmen',cls:'icon-mitnehmen'},
+  pre:       {emoji:'🔥',label:'Vor dem Training',cls:'icon-pre'},
+  post:      {emoji:'🛁',label:'Nach dem Training',cls:'icon-post'},
+  vorrat:    {emoji:'📦',label:'Aus dem Vorrat',cls:'icon-vorrat'},
+  anfaenger: {emoji:'👋',label:'Für Einsteiger',cls:'icon-anfaenger'},
+};
+
+const recipes = [
+  {
+    id:1, emoji:'🌯', title:'Power Wrap', subtitle:'Mit Hühnchen oder Tofu', time:'15 Min',
+    tags:['schnell','protein','mitnehmen','anfaenger'],
+    macros:{protein:'32g',carbs:'38g',fat:'14g',fiber:'5g'},
+    keyIngredients:['hühnchen','tofu','frischkäse','salat','gurke','paprika'],
+    ingredientsList:[
+      {text:'1 großes Wrap (Vollkorn geht auch)',key:'wrap'},
+      {text:'80g Frischkäse (Natur)',key:'frischkäse'},
+      {text:'150g Hühnerbrustfilet oder fester Tofu',key:'hühnchen'},
+      {text:'Handvoll Blattsalat',key:'salat'},
+      {text:'½ Gurke, in Streifen',key:'gurke'},
+      {text:'½ Paprika (rot oder gelb), in Streifen',key:'paprika'},
+      {text:'2–3 Scheiben Orange (optional)',key:'orange'},
+    ],
+    steps:[
+      'Hühnchen oder Tofu in Streifen schneiden. In einer Pfanne mit etwas Öl 5–6 Min anbraten. Mit Salz und Pfeffer würzen.',
+      'Wrap flach hinlegen. Frischkäse gleichmäßig draufstreichen – bis fast zum Rand.',
+      'Salat, Gurke und Paprika auf der unteren Hälfte verteilen.',
+      'Gebratenes Hühnchen oder Tofu drauflegen. Wer mag: Orangenstücke dazu.',
+      'Wrap fest einrollen, diagonal halbieren. Fertig.',
+    ],
+    tip:'Zum Mitnehmen in Backpapier einwickeln – hält gut 4 Stunden. Tofu vorher 30 Min in Sojasoße marinieren macht ihn deutlich besser.',
+  },
+  {
+    id:2, emoji:'🥣', title:'Recovery Bowl', subtitle:'Quinoa, Süßkartoffel & Ei', time:'25 Min',
+    tags:['protein','post','vegi'],
+    macros:{protein:'28g',carbs:'52g',fat:'11g',fiber:'8g'},
+    keyIngredients:['quinoa','süßkartoffel','eier','spinat','avocado'],
+    ingredientsList:[
+      {text:'100g Quinoa (trocken)',key:'quinoa'},
+      {text:'1 mittelgroße Süßkartoffel',key:'süßkartoffel'},
+      {text:'2 Eier',key:'eier'},
+      {text:'Handvoll Spinat oder Rucola',key:'spinat'},
+      {text:'½ Avocado',key:'avocado'},
+      {text:'1 EL Tahini oder Hummus',key:'tahini'},
+    ],
+    steps:[
+      'Quinoa mit doppelter Menge Wasser aufkochen, 15 Min köcheln lassen.',
+      'Süßkartoffel würfeln, mit Öl und Salz bei 200°C 20 Min rösten.',
+      'Eier kochen: 6 Min für wachsweich.',
+      'Alles in einer Bowl anrichten. Tahini mit Wasser und Zitrone verrühren, drüberträufeln.',
+      'Ei halbieren, drauflegen. Chiliflocken drüber. Fertig.',
+    ],
+    tip:'Quinoa und Süßkartoffel am Vorabend vorbereiten – dann geht die Bowl unter 5 Minuten.',
+  },
+  {
+    id:3, emoji:'🥞', title:'Protein Pancakes', subtitle:'Hafer, Quark & Banane', time:'12 Min',
+    tags:['schnell','protein','vegi','pre','anfaenger'],
+    macros:{protein:'24g',carbs:'45g',fat:'6g',fiber:'4g'},
+    keyIngredients:['banane','eier','quark','haferflocken'],
+    ingredientsList:[
+      {text:'1 reife Banane',key:'banane'},
+      {text:'2 Eier',key:'eier'},
+      {text:'100g Magerquark',key:'quark'},
+      {text:'4 EL Haferflocken (zart)',key:'haferflocken'},
+      {text:'½ TL Backpulver',key:'backpulver'},
+      {text:'Beeren oder Ahornsirup',key:'beeren'},
+    ],
+    steps:[
+      'Banane zerdrücken. Eier, Quark, Haferflocken, Salz und Backpulver dazugeben.',
+      'Alles gut verrühren. Teig 2 Min quellen lassen.',
+      'Pfanne mit wenig Öl bei mittlerer Hitze erhitzen.',
+      'Kleine Portionen (ca. 2 EL) in die Pfanne, 2–3 Min pro Seite backen.',
+      'Mit Beeren oder Ahornsirup servieren.',
+    ],
+    tip:'Kein Zucker nötig – die Banane süßt genug. Je reifer, desto süßer der Teig.',
+  },
+];
+
+let currentFilter = 'all';
+let fridgeItems = [];
+let missingMax = 99;
+
+function norm(s){ return s.toLowerCase().trim(); }
+
+function getMatch(r){
+  if(!fridgeItems.length) return {missing:[]};
+  const have = fridgeItems.map(norm);
+  const missing = r.keyIngredients.filter(ing =>
+    !have.some(h => h.includes(norm(ing)) || norm(ing).includes(h))
+  );
+  return {missing};
+}
+
+// TABS
+function switchTab(tab){
+  ['rezepte','kuehlschrank'].forEach(t=>{
+    document.getElementById('panel-'+t).classList.toggle('active', t===tab);
+    document.getElementById('tab-'+t).classList.toggle('active', t===tab);
+    const n = document.getElementById('nav-'+t);
+    if(n) n.classList.toggle('nav-active', t===tab);
+  });
+  if(tab==='kuehlschrank') renderFridgeResults();
+}
+
+// RECIPES PANEL
+function setFilter(tag, btn){
+  currentFilter = tag;
+  document.querySelectorAll('#panel-rezepte .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderRecipes();
+}
+
+function renderRecipes(){
+  const filtered = recipes.filter(r => currentFilter==='all' || r.tags.includes(currentFilter));
+  document.getElementById('count').textContent = `${filtered.length} Rezept${filtered.length!==1?'e':''}`;
+  document.getElementById('recipeGrid').innerHTML = filtered.map(r=>cardHTML(r,false)).join('');
+}
+
+function cardHTML(r, showMatch){
+  const {missing} = getMatch(r);
+  let badge='', missingBlock='';
+  if(showMatch && fridgeItems.length){
+    badge = missing.length===0
+      ? `<div class="match-badge full">✓ Alles da</div>`
+      : `<div class="match-badge close">+${missing.length} fehlt</div>`;
+    if(missing.length>0){
+      missingBlock = `<div class="missing-list"><span class="missing-label">Noch kaufen:</span>${missing.map(m=>`<span class="missing-tag">${m}</span>`).join('')}</div>`;
+    }
+  }
+  return `<div class="recipe-card" onclick="openModal(${r.id})">
+    <div class="card-image">${badge}<span class="card-image-emoji">${r.emoji}</span></div>
+    <div class="card-body">
+      <div class="card-icons">${r.tags.map(t=>`<div class="icon-badge ${ICONS[t].cls}">${ICONS[t].emoji}<span class="tooltip">${ICONS[t].label}</span></div>`).join('')}</div>
+      <div class="timing-tag">⏱ ${r.time}</div>
+      <h3 class="card-title">${r.title}</h3>
+      <p class="card-subtitle">${r.subtitle}</p>
+      ${missingBlock}
+      <div class="macros">
+        <div class="macro protein"><div class="macro-value">${r.macros.protein}</div><div class="macro-label">Protein</div></div>
+        <div class="macro carbs"><div class="macro-value">${r.macros.carbs}</div><div class="macro-label">Kohlenhydrate</div></div>
+        <div class="macro fat"><div class="macro-value">${r.macros.fat}</div><div class="macro-label">Fette</div></div>
+        <div class="macro fiber"><div class="macro-value">${r.macros.fiber}</div><div class="macro-label">Ballaststoffe</div></div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// FRIDGE
+function addFridgeItem(){
+  const inp = document.getElementById('fridgeInput');
+  const v = inp.value.trim();
+  if(!v) return;
+  if(!fridgeItems.map(norm).includes(norm(v))){ fridgeItems.push(v); renderFridgeTags(); renderFridgeResults(); }
+  inp.value=''; inp.focus();
+}
+
+function quickAdd(chip, item){
+  if(chip.classList.contains('used')) return;
+  if(!fridgeItems.map(norm).includes(norm(item))){ fridgeItems.push(item); renderFridgeTags(); renderFridgeResults(); }
+  chip.classList.add('used');
+}
+
+function removeFridgeItem(item){
+  fridgeItems = fridgeItems.filter(i=>norm(i)!==norm(item));
+  document.querySelectorAll('.suggestion-chip').forEach(el=>{ if(el.textContent.trim().includes(item)) el.classList.remove('used'); });
+  renderFridgeTags(); renderFridgeResults();
+}
+
+function renderFridgeTags(){
+  const c = document.getElementById('fridgeTags');
+  c.innerHTML = fridgeItems.length===0
+    ? '<span class="fridge-empty">Noch nichts eingetragen.</span>'
+    : fridgeItems.map(item=>`<div class="fridge-tag">${item}<button onclick="removeFridgeItem('${item}')">✕</button></div>`).join('');
+}
+
+function setMissing(n, btn){
+  missingMax = n;
+  document.querySelectorAll('.missing-filter-row .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderFridgeResults();
+}
+
+function renderFridgeResults(){
+  const status = document.getElementById('fridgeResults');
+  const grid = document.getElementById('fridgeGrid');
+  if(!fridgeItems.length){
+    status.innerHTML='';
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🧊</div><p>Trag links ein was du zu Hause hast – dann siehst du sofort was du daraus kochen kannst.</p></div>`;
+    return;
+  }
+  const matched = recipes
+    .map(r=>({r,...getMatch(r)}))
+    .filter(({missing})=>missing.length<=missingMax)
+    .sort((a,b)=>a.missing.length-b.missing.length);
+  status.innerHTML='';
+  grid.innerHTML = matched.length===0
+    ? `<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🤷</div><p>Kein Rezept passt gerade. Probier "+3 Zutaten" oder trag mehr Zutaten ein.</p></div>`
+    : matched.map(({r})=>cardHTML(r,true)).join('');
+}
+
+// MODAL
+function openModal(id){
+  const r = recipes.find(x=>x.id===id);
+  const have = fridgeItems.map(norm);
+  document.getElementById('mEmoji').textContent = r.emoji;
+  document.getElementById('mTitle').textContent = r.title;
+  document.getElementById('mTiming').textContent = `⏱ ${r.time}`;
+  document.getElementById('mIcons').innerHTML = r.tags.map(t=>`<div class="modal-icon-badge ${ICONS[t].cls}">${ICONS[t].emoji} ${ICONS[t].label}</div>`).join('');
+  document.getElementById('mMacros').innerHTML = `
+    <div class="modal-macro protein"><div class="modal-macro-value">${r.macros.protein}</div><div class="modal-macro-label">Protein</div></div>
+    <div class="modal-macro carbs"><div class="modal-macro-value">${r.macros.carbs}</div><div class="modal-macro-label">Kohlenhydrate</div></div>
+    <div class="modal-macro fat"><div class="modal-macro-value">${r.macros.fat}</div><div class="modal-macro-label">Fette</div></div>
+    <div class="modal-macro fiber"><div class="modal-macro-value">${r.macros.fiber}</div><div class="modal-macro-label">Ballaststoffe</div></div>`;
+  document.getElementById('mIngredients').innerHTML = r.ingredientsList.map(ing=>{
+    const isHave = have.length && have.some(h=>h.includes(norm(ing.key))||norm(ing.key).includes(h));
+    const isMiss = have.length && !isHave;
+    return `<li class="${isHave?'ing-have':isMiss?'ing-miss':''}">${ing.text}${isHave?'<span class="ing-tag have">✓ da</span>':''}${isMiss?'<span class="ing-tag miss">fehlt</span>':''}</li>`;
+  }).join('');
+  document.getElementById('mSteps').innerHTML = r.steps.map((s,i)=>`<li class="step"><span class="step-num">${i+1}</span><span class="step-text">${s}</span></li>`).join('');
+  document.getElementById('mTip').innerHTML = `<strong>💡 Tipp</strong>${r.tip}`;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(e){ if(e.target===document.getElementById('modalOverlay')) closeModalDirect(); }
+function closeModalDirect(){ document.getElementById('modalOverlay').classList.remove('open'); document.body.style.overflow=''; }
+
+renderRecipes();
+renderFridgeResults();
+</script>
+</body>
+</html>
