@@ -71,6 +71,7 @@
   .recipe-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(26,10,46,0.15); }
   .card-image { height: 185px; background: linear-gradient(135deg, var(--purple-deep) 0%, var(--purple-mid) 100%); display: flex; align-items: center; justify-content: center; font-size: 4.5rem; position: relative; overflow: hidden; }
   .card-image::before { content: ''; position: absolute; inset: 0; background-image: radial-gradient(circle, rgba(255,107,26,0.15) 1px, transparent 1px); background-size: 18px 18px; }
+  .card-image img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .card-image-emoji { position: relative; z-index: 1; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4)); }
   .match-badge { position: absolute; top: 10px; right: 10px; background: rgba(26,10,46,0.85); border: 1.5px solid rgba(255,255,255,0.15); border-radius: 20px; padding: 0.25rem 0.65rem; font-size: 0.7rem; font-weight: 700; color: white; z-index: 2; backdrop-filter: blur(4px); }
   .match-badge.full { border-color: #4ade80; color: #4ade80; }
@@ -312,7 +313,23 @@
     min-width: 52px; flex-shrink: 0;
   }
 
-  /* Done screen */
+  .cook-swipe-arrows {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    display: flex; align-items: center; justify-content: space-between;
+    pointer-events: none; padding: 0 12px; z-index: 10;
+  }
+  .cook-arrow {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: rgba(255,255,255,0.85);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; color: var(--purple-deep);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    pointer-events: all; cursor: pointer; border: none;
+    transition: opacity 0.2s, transform 0.15s;
+    font-weight: 700;
+  }
+  .cook-arrow:hover { transform: scale(1.1); }
+  .cook-arrow:disabled { opacity: 0; pointer-events: none; }
   .cook-done {
     flex: 0 0 100%; width: 100%; height: 100%;
     display: flex; flex-direction: column;
@@ -479,6 +496,10 @@
   </div>
   <div class="cook-slides-container" id="cookSlidesContainer">
     <div class="cook-slides-track" id="cookSlidesTrack"></div>
+    <div class="cook-swipe-arrows">
+      <button class="cook-arrow" id="cookArrowPrev" onclick="cookPrev()">‹</button>
+      <button class="cook-arrow" id="cookArrowNext" onclick="cookNext()">›</button>
+    </div>
   </div>
   <div class="cook-bottom-nav" id="cookBottomNav">
     <button class="cook-nav-btn" id="cookPrevBtn" onclick="cookPrev()" disabled>←</button>
@@ -693,16 +714,16 @@ const recipes = [
     ],
     steps:[
       'Alle Zutaten herrichten, damit später nichts mehr gesucht werden muss. Zutaten abwiegen. Ofen auf 180°C Ober-/Unterhitze vorheizen.',
-      'Butter in kleine Stücke schneiden. Je kleiner, desto schneller wird sie weich und lässt sich besser verrühren.',
+      'Butter in kleine Stücke schneiden. Je kleiner, desto schneller wird sie weich und lässt sich besser verrühren. Tipp: Ein Päckchen Butter hat 250g – in 5 gleich große Teile markieren, dann hat jedes Stück 50g.',
       'Die 100g Butter, 100g Zucker, 2 Eier und 1 Päckchen Vanillezucker in eine hohe Schüssel geben.',
       'Mixen bis die Butter sich aufgelöst hat und eine etwas schaumige Masse entsteht. Wenn die Butter noch etwas kälter war, bleiben vielleicht kleine Klümpchen – das macht nichts.',
       '250g Quark und 1 Päckchen Vanillepuddingpulver dazugeben. Nochmal alles gut durchrühren bis eine gleichmäßige Masse entsteht.',
       'In eine zweite Schüssel 50g Mehl, 30g Butter, 20g Zucker und 1 EL Kakaopulver geben.',
       'Mit einer Gabel oder einem Löffel zu einer Masse verarbeiten – einfach so lange drücken und rühren bis alles vermischt ist.',
       'Eine Muffinform mit 12 Papierförmchen auslegen.',
-      'Den hellen Teig gleichmäßig in die 12 Förmchen verteilen – etwa zu zwei Dritteln voll, nicht mehr.',
-      'Die Schokoladenstreusel mit zwei kleinen Löffeln auf den Teig verteilen. Muss nicht perfekt sein!',
-      'Schon fertig zum Backen! Wo du etwas Teig aufs Blech gekleckert hast – einfach wegschlecken.',
+      'Den hellen Teig gleichmäßig in die 12 Förmchen verteilen – etwa zur Hälfte voll, nicht mehr.',
+      'Die Schokolmasse auf den Teig verteilen. Das lässt sich gut mit zwei kleinen Löffeln machen. Muss nicht perfekt sein!',
+      'Schon fertig! Wo du etwas Teig aufs Blech gekleckert hast, einfach mit dem Finger wegschlecken.',
       'Form in den vorgeheizten Ofen (180°C) geben. Timer auf 20 Minuten stellen.',
     ],
     tip:'Lass die Muffins etwas abkühlen bevor du sie aus der Form nimmst, sonst zerbrechen sie. Noch warm sind sie am besten.',
@@ -761,7 +782,7 @@ function cardHTML(r, showMatch){
     }
   }
   return `<div class="recipe-card" onclick="openModal(${r.id})">
-    <div class="card-image">${badge}<span class="card-image-emoji">${r.emoji}</span></div>
+    <div class="card-image">${badge}${r.donePhoto ? `<img src="${r.donePhoto}" alt="${r.title}">` : `<span class="card-image-emoji">${r.emoji}</span>`}</div>
     <div class="card-body">
       <div class="card-icons">${r.tags.map(t=>`<div class="icon-badge ${ICONS[t].cls}">${ICONS[t].emoji}<span class="tooltip">${ICONS[t].label}</span></div>`).join('')}</div>
       <div class="timing-tag">⏱ ${r.time}</div>
@@ -943,6 +964,8 @@ function cookGoTo(n) {
   const pct = isDone ? 100 : (cookCurrent / cookTotal) * 100;
   document.getElementById('cookProgressFill').style.width = pct + '%';
   document.getElementById('cookPrevBtn').disabled = cookCurrent === 0;
+  document.getElementById('cookArrowPrev').disabled = cookCurrent === 0;
+  document.getElementById('cookArrowNext').disabled = isDone;
   document.getElementById('cookBottomNav').style.display = isDone ? 'none' : 'flex';
   document.getElementById('cookStepCounter').textContent = isDone ? '' : `${cookCurrent + 1} / ${cookTotal}`;
   document.getElementById('cookNextBtn').textContent = cookCurrent === cookTotal - 1 ? '🎉 Fertig!' : 'Weiter';
