@@ -168,6 +168,180 @@
     .modal-macros { grid-template-columns: repeat(2, 1fr); }
     .hero h1 { font-size: 3rem; }
   }
+
+  /* ── COOK BUTTON IN MODAL ── */
+  .cook-btn {
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    width: 100%; margin-top: 1.5rem;
+    padding: 0.95rem 1.5rem;
+    background: var(--orange); color: white; border: none;
+    border-radius: 12px; font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; font-weight: 700; cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    letter-spacing: 0.02em;
+  }
+  .cook-btn:hover { background: var(--orange-light); transform: translateY(-1px); }
+
+  /* ── COOKING MODE OVERLAY ── */
+  .cook-overlay {
+    position: fixed; inset: 0; z-index: 400;
+    background: #f7f5f2;
+    display: flex; flex-direction: column;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .cook-overlay.open { opacity: 1; pointer-events: all; }
+
+  .cook-topbar {
+    flex-shrink: 0;
+    padding: 14px 20px 10px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(26,10,46,0.08);
+    background: #f7f5f2;
+  }
+  .cook-topbar-title {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 0.95rem; color: var(--purple-deep);
+  }
+  .cook-close-btn {
+    width: 38px; height: 38px; border-radius: 50%;
+    border: 1.5px solid rgba(26,10,46,0.15);
+    background: transparent; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--purple-deep); font-size: 1rem;
+    transition: background 0.15s;
+  }
+  .cook-close-btn:hover { background: rgba(26,10,46,0.06); }
+
+  .cook-progress-bar {
+    flex-shrink: 0; height: 3px;
+    background: rgba(26,10,46,0.1);
+  }
+  .cook-progress-fill {
+    height: 100%; background: var(--orange);
+    transition: width 0.35s ease;
+  }
+
+  .cook-slides-container {
+    flex: 1; overflow: hidden; position: relative;
+  }
+  .cook-slides-track {
+    display: flex; height: 100%;
+    transition: transform 0.38s cubic-bezier(0.4,0,0.2,1);
+  }
+  .cook-slide {
+    flex: 0 0 100%; width: 100%; height: 100%;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+
+  .cook-photo {
+    flex: 0 0 55%; position: relative; overflow: hidden;
+    background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid));
+    display: flex; align-items: center; justify-content: center;
+  }
+  .cook-photo img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+  }
+  .cook-photo-emoji {
+    font-size: 5rem;
+    filter: drop-shadow(0 4px 16px rgba(0,0,0,0.4));
+  }
+  .cook-step-badge {
+    position: absolute; top: 12px; left: 12px;
+    background: white; color: var(--purple-deep);
+    font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  }
+
+  .cook-text {
+    flex: 1; padding: 20px 24px 16px;
+    overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
+  }
+  .cook-step-label {
+    font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--orange);
+  }
+  .cook-instruction {
+    font-size: 1.05rem; font-weight: 500;
+    line-height: 1.55; color: var(--purple-deep); flex: 1;
+  }
+  .cook-tip {
+    padding: 10px 12px;
+    background: rgba(255,107,26,0.08);
+    border-left: 3px solid var(--orange);
+    border-radius: 0 8px 8px 0;
+    font-size: 0.8rem; color: rgba(26,10,46,0.6);
+    line-height: 1.5;
+  }
+
+  .cook-bottom-nav {
+    flex-shrink: 0;
+    padding: 10px 20px 22px;
+    background: #f7f5f2;
+    border-top: 1px solid rgba(26,10,46,0.07);
+    display: flex; align-items: center;
+    justify-content: space-between; gap: 10px;
+  }
+  .cook-nav-btn {
+    width: 48px; height: 48px; border-radius: 50%;
+    border: 1.5px solid rgba(26,10,46,0.15);
+    background: white; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; color: var(--purple-deep);
+    transition: all 0.15s; flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+  .cook-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .cook-nav-btn:not(:disabled):hover { background: var(--purple-deep); color: white; border-color: var(--purple-deep); }
+  .cook-nav-btn.next {
+    flex: 1; border-radius: 26px; width: auto;
+    background: var(--purple-deep); color: white;
+    border-color: var(--purple-deep);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600; font-size: 0.95rem;
+    padding: 0 20px; height: 48px;
+  }
+  .cook-nav-btn.next:not(:disabled):hover { background: var(--purple-mid); }
+  .cook-step-counter {
+    font-size: 0.78rem; font-weight: 500;
+    color: rgba(26,10,46,0.4); text-align: center;
+    min-width: 52px; flex-shrink: 0;
+  }
+
+  /* Done screen */
+  .cook-done {
+    flex: 0 0 100%; width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 32px 28px; text-align: center; gap: 14px;
+  }
+  .cook-done-emoji { font-size: 3.5rem; line-height: 1; }
+  .cook-done-title {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 2rem; color: var(--purple-deep);
+  }
+  .cook-done-img {
+    width: 100%; max-width: 280px; height: 200px;
+    object-fit: cover; border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  }
+  .cook-done-emoji-big { font-size: 6rem; }
+  .cook-done-sub {
+    font-size: 0.95rem; color: rgba(26,10,46,0.55);
+    line-height: 1.55; max-width: 260px;
+  }
+  .cook-done-back {
+    margin-top: 6px; padding: 13px 28px;
+    background: var(--orange); color: white; border: none;
+    border-radius: 26px; font-family: 'DM Sans', sans-serif;
+    font-weight: 700; font-size: 0.95rem; cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .cook-done-back:hover { opacity: 0.88; }
 </style>
 </head>
 <body>
@@ -289,7 +463,27 @@
       <p class="modal-section-title">So geht's</p>
       <ol class="steps-list" id="mSteps"></ol>
       <div class="tip-box" id="mTip"></div>
+      <button class="cook-btn" onclick="openCookMode(currentModalId)">🍳 Jetzt kochen – Schritt für Schritt</button>
     </div>
+  </div>
+</div>
+
+<!-- COOKING MODE OVERLAY -->
+<div class="cook-overlay" id="cookOverlay">
+  <div class="cook-topbar">
+    <span class="cook-topbar-title" id="cookTitle"></span>
+    <button class="cook-close-btn" onclick="closeCookMode()">✕</button>
+  </div>
+  <div class="cook-progress-bar">
+    <div class="cook-progress-fill" id="cookProgressFill"></div>
+  </div>
+  <div class="cook-slides-container" id="cookSlidesContainer">
+    <div class="cook-slides-track" id="cookSlidesTrack"></div>
+  </div>
+  <div class="cook-bottom-nav" id="cookBottomNav">
+    <button class="cook-nav-btn" id="cookPrevBtn" onclick="cookPrev()" disabled>←</button>
+    <span class="cook-step-counter" id="cookStepCounter"></span>
+    <button class="cook-nav-btn next" id="cookNextBtn" onclick="cookNext()">Weiter</button>
   </div>
 </div>
 
@@ -588,7 +782,9 @@ function renderFridgeResults(){
 }
 
 // MODAL
+let currentModalId = null;
 function openModal(id){
+  currentModalId = id;
   const r = recipes.find(x=>x.id===id);
   const have = fridgeItems.map(norm);
   document.getElementById('mEmoji').textContent = r.emoji;
@@ -615,6 +811,100 @@ function closeModalDirect(){ document.getElementById('modalOverlay').classList.r
 
 renderRecipes();
 renderFridgeResults();
+
+// ── COOKING MODE ──
+let cookCurrent = 0;
+let cookTotal = 0;
+let cookStartX = 0;
+
+function openCookMode(id) {
+  const r = recipes.find(x => x.id === id);
+  if (!r) return;
+
+  closeModalDirect();
+
+  const steps = r.steps;
+  const photos = r.photos || [];
+  cookTotal = steps.length;
+  cookCurrent = 0;
+
+  document.getElementById('cookTitle').textContent = r.emoji + ' ' + r.title;
+
+  const track = document.getElementById('cookSlidesTrack');
+  track.innerHTML = '';
+
+  // Step slides
+  steps.forEach((step, i) => {
+    const photo = photos[i];
+    const photoHTML = photo
+      ? `<img src="${photo}" alt="Schritt ${i+1}">`
+      : `<span class="cook-photo-emoji">${r.emoji}</span>`;
+
+    const slide = document.createElement('div');
+    slide.className = 'cook-slide';
+    slide.innerHTML = `
+      <div class="cook-photo">
+        ${photoHTML}
+        <span class="cook-step-badge">Schritt ${i+1} von ${steps.length}</span>
+      </div>
+      <div class="cook-text">
+        <div class="cook-step-label">Schritt ${i+1}</div>
+        <div class="cook-instruction">${step}</div>
+        ${r.tip && i === steps.length - 1 ? `<div class="cook-tip">💡 ${r.tip}</div>` : ''}
+      </div>`;
+    track.appendChild(slide);
+  });
+
+  // Done slide
+  const donePhoto = r.donePhoto;
+  const doneSlide = document.createElement('div');
+  doneSlide.className = 'cook-slide';
+  doneSlide.innerHTML = `
+    <div class="cook-done">
+      <div class="cook-done-emoji">🎉</div>
+      <div class="cook-done-title">Fertig!</div>
+      ${donePhoto
+        ? `<img src="${donePhoto}" alt="Fertiges Gericht" class="cook-done-img">`
+        : `<div class="cook-done-emoji-big">${r.emoji}</div>`}
+      <div class="cook-done-sub">Guten Appetit! Du hast ${r.title} gekocht.</div>
+      <button class="cook-done-back" onclick="cookGoTo(0)">Nochmal von vorne</button>
+    </div>`;
+  track.appendChild(doneSlide);
+
+  document.getElementById('cookOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  cookGoTo(0);
+
+  // Touch swipe
+  const container = document.getElementById('cookSlidesContainer');
+  container.ontouchstart = e => { cookStartX = e.touches[0].clientX; };
+  container.ontouchend = e => {
+    const diff = cookStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) { diff > 0 ? cookNext() : cookPrev(); }
+  };
+}
+
+function cookGoTo(n) {
+  const total = cookTotal + 1; // +1 done screen
+  cookCurrent = Math.max(0, Math.min(n, total - 1));
+  document.getElementById('cookSlidesTrack').style.transform = `translateX(-${cookCurrent * 100}%)`;
+
+  const isDone = cookCurrent >= cookTotal;
+  const pct = isDone ? 100 : (cookCurrent / cookTotal) * 100;
+  document.getElementById('cookProgressFill').style.width = pct + '%';
+  document.getElementById('cookPrevBtn').disabled = cookCurrent === 0;
+  document.getElementById('cookBottomNav').style.display = isDone ? 'none' : 'flex';
+  document.getElementById('cookStepCounter').textContent = isDone ? '' : `${cookCurrent + 1} / ${cookTotal}`;
+  document.getElementById('cookNextBtn').textContent = cookCurrent === cookTotal - 1 ? '🎉 Fertig!' : 'Weiter';
+}
+
+function cookNext() { cookGoTo(cookCurrent + 1); }
+function cookPrev() { cookGoTo(cookCurrent - 1); }
+
+function closeCookMode() {
+  document.getElementById('cookOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
 </script>
 </body>
 </html>
